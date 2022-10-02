@@ -1,20 +1,17 @@
 #include <iostream>
 #include <chrono>
+#include <vector>
 using namespace std;
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::chrono::seconds;
 using std::chrono::system_clock;
 
-int not_equal(string s, string t, int i, int j){
-    return s[i] != t[j];
-}
-
-int distance(string x, string y){
+int distance_2(string x, string y){
 
     int n = x.length();
     int diag;
-    int* M = new int[n+1];
+    vector<int> M(n+1);
 
     for(int i=0;i<n+1;i++){
         M[i] = i;
@@ -29,29 +26,12 @@ int distance(string x, string y){
             else{
                 int up = 1 + M[j];
                 int left = 1 + M[j-1];
-                int curr_diag = not_equal(x,y,i,j) + diag;
-                int partial_min = min(up,left);
-
+                int curr_diag = (x[i] != y[j]) + diag;
                 diag = M[j];
-                M[j] = partial_min < curr_diag ? partial_min : curr_diag;
+                M[j] = min(curr_diag, min(up,left));
             }
         }
     }
     int res = M[n];
-    delete M;
     return res;
-}
-
-int main(){
-    string s;
-    string t;
-    cin >> s;
-    cin >> t;
-
-    auto t0 = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-    int dist = distance(s,t);
-    auto tf = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-    cout << dist << endl; 
-    cout << tf-t0 << endl;
-    return 0;
 }
